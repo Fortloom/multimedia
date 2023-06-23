@@ -2,7 +2,6 @@ package com.fortlom.multimedia.domain.imageAgreegate.entity;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -17,9 +16,12 @@ public class Image {
     private Long id;
 
     @NotNull
-    private String imagenUrl;
+    private String imageUrl;
 
-    private Long userid;
+    @NotNull
+    private String imageId;
 
-    private Long publicationid;
+    private Long userId;
+
+    private Long publicationId;
 }

@@ -17,11 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;;
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/multimediaservice")
+@RequestMapping("/api/v1/multimedia-service")
 public class ImagePublicationController {
 
     @Autowired
@@ -35,24 +34,22 @@ public class ImagePublicationController {
 
 
     @PostMapping("/upload/publications/{publicationsId}/images")
-    public ResponseEntity<ImageResource> createimageforpublication(@PathVariable Long publicationsId, @RequestParam MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<ImageResource> createImageForPublication(@PathVariable Long publicationsId, @RequestParam MultipartFile multipartFile) throws IOException {
         BufferedImage bi = ImageIO.read(multipartFile.getInputStream());
         if(bi == null){
-            return new ResponseEntity(new Message("imagen no válida"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new Message("image not valid"), HttpStatus.BAD_REQUEST);
         }
 
         Map result = cloudinaryService.upload(multipartFile);
         Image image=new Image();
-        image.setImagenUrl((String)result.get("url"));
-        image.setImagenId( (String)result.get("public_id"));
+        image.setImageUrl((String)result.get("url"));
+        image.setImageId((String)result.get("public_id"));
 
-        return ResponseEntity.ok( mapper.toResource(imageService.createforpublication(publicationsId,image)));
+        return ResponseEntity.ok( mapper.toResource(imageService.createForPublication(publicationsId,image)));
     }
     @GetMapping("/publications/{publicationsId}/images")
     public ResponseEntity<Page<ImageResource>> getImageByPublicationId(@PathVariable Long publicationsId, Pageable pageable) {
 
         return ResponseEntity.ok(mapper.modelListToPage(imageService.getImageByPublicationId(publicationsId), pageable));
     }
-
-
 }

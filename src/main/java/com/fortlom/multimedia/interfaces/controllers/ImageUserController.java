@@ -16,11 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;;
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/multimediaservice")
+@RequestMapping("/api/v1/multimedia-service")
 public class ImageUserController {
 
     @Autowired
@@ -34,7 +33,7 @@ public class ImageUserController {
 
 
     @PostMapping("/upload/users/{userId}/images")
-    public ResponseEntity<ImageResource> createimageforuser(@PathVariable Long userId, @RequestParam MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<ImageResource> createImageForUser(@PathVariable Long userId, @RequestParam MultipartFile multipartFile) throws IOException {
         BufferedImage bi = ImageIO.read(multipartFile.getInputStream());
         if(bi == null){
             return new ResponseEntity(new Message("imagen no válida"), HttpStatus.BAD_REQUEST);
@@ -42,10 +41,10 @@ public class ImageUserController {
 
         Map result = cloudinaryService.upload(multipartFile);
         Image image=new Image();
-        image.setImagenUrl((String)result.get("url"));
-        image.setImagenId( (String)result.get("public_id"));
+        image.setImageUrl((String)result.get("url"));
+        image.setImageId((String) result.get("public_id"));
 
-        return ResponseEntity.ok( mapper.toResource(imageService.createforuser(userId,image)));
+        return ResponseEntity.ok( mapper.toResource(imageService.createForUser(userId,image)));
     }
     @GetMapping("/users/{userId}/images")
     public ResponseEntity<Page<ImageResource>> getImageByUserId(@PathVariable Long userId, Pageable pageable) {
@@ -57,7 +56,7 @@ public class ImageUserController {
         if(!imageService.exists(id))
             return new ResponseEntity(new Message("no exists"), HttpStatus.NOT_FOUND);
         Image image = imageService.getById(id);
-        Map result = cloudinaryService.delete(image.getImagenId());
+        Map result = cloudinaryService.delete(image.getImageId());
         imageService.delete(id);
         return new ResponseEntity(new Message("imagen deleted"), HttpStatus.OK);
     }

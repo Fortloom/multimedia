@@ -42,41 +42,36 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image createforuser(Long userId, Image request) {
-        boolean check1 = restTemplate.getForObject("https://fortlom-account.herokuapp.com/api/v1/userservice/artists/check/" + userId,boolean.class);
-        boolean check2 = restTemplate.getForObject("https://fortlom-account.herokuapp.com/api/v1/userservice/fanatics/check/" + userId,boolean.class);
+    public Image createForUser(Long userId, Image request) {
+        boolean check1 = restTemplate.getForObject("http://localhost:8081/api/v1/user-service/artists/check/" + userId,boolean.class);
+        boolean check2 = restTemplate.getForObject("http://localhost:8081/api/v1/user-service/fanatics/check/" + userId,boolean.class);
         if(check1||check2) {
-            request.setUserid(userId);
+            request.setUserId(userId);
             return imageRepository.save(request);
-        }else {
-            throw  new ResourcePerzonalized("id inexistente");
-
+        } else {
+            throw new ResourcePerzonalized("id inexistente");
         }
-
-
     }
 
     @Override
-    public Image createforpublication(Long publicationId, Image request) {
-        boolean check = restTemplate.getForObject("https://fortlom-content.herokuapp.com/api/v1/contentservice/publications/check/" + publicationId,boolean.class);
+    public Image createForPublication(Long publicationId, Image request) {
+        boolean check = restTemplate.getForObject("http://localhost:8082/api/v1/content-service/publications/check/" + publicationId,boolean.class);
        if(check){
-           request.setPublicationid(publicationId);
+           request.setPublicationId(publicationId);
            return imageRepository.save(request);
        }else{
            throw  new ResourcePerzonalized("id inexistente");
        }
-
-
     }
 
     @Override
     public List<Image> getImageByUserId(Long userId) {
-        return imageRepository.findByUserid(userId);
+        return imageRepository.findByUserId(userId);
     }
 
     @Override
     public List<Image> getImageByPublicationId(Long PublicationId) {
-        return imageRepository.findByPublicationid(PublicationId);
+        return imageRepository.findByPublicationId(PublicationId);
     }
 
     @Override
